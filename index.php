@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Src/class.calpush.php';
+require_once 'Src/class.calpushController.php';
 
-$push = new calpush();
-echo $push->pushcalendar();
+$push = new calpushController();
+echo $push->updateCalendar();
