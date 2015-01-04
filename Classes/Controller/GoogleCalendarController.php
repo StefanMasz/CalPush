@@ -1,13 +1,11 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../Res/constants.php';
-require_once __DIR__ . '/class.localDatesController.php';
 
-/**
- * Class calpushController
- */
-class calpushController
-{
+class googleCalendarController {
+
+    /**
+     * @var Google_Service_Calendar
+     */
+    private $calendarService = null;
 
     /**
      * @var Google_Client
@@ -15,31 +13,35 @@ class calpushController
     private $googleClient = null;
 
     /**
-     * @var localDatesController;
+     * Constructor - init calendarService
      */
-    private $localDatesController = null;
-
-    /**
-     * updates the configured calendars
-     */
-    public function updateCalendar()
-    {
-        $localDates = $this->getLocalDatesController()->getDates();
-        $this->syncWithGoogleCalendar($localDates);
-        if (false === $this->sendStatusMail()){
-            echo 'mailversand fehlgeschlagen';
-        } else {
-            echo 'alles duffte';
-        }
+    public function __construct(){
+        $this->calendarService = new Google_Service_Calendar($this->getGoogleClient());
     }
 
     /**
-     * @param array $localDates
+     * @param string $title
+     * @return Google_Service_Calendar_CalendarListEntry
+     * @throws Exception
      */
-    private function syncWithGoogleCalendar($localDates)
-    {
-        $service = new Google_Service_Calendar($this->getGoogleClient());
-        $calendarList = $service->calendarList->listCalendarList();
+    public function findGoogleCalendarByTitle($title){
+        $calendarList = $this->calendarService->calendarList->listCalendarList();
+
+        /** @var Google_Service_Calendar_CalendarListEntry $calendar */
+        foreach ($calendarList->getItems() as $calendar){
+            if ($title === $calendar->summary){
+                return $calendar;
+            }
+        }
+        throw new Exception('calendar '.$title.' not found at remotesite (google)', 1420368033);
+    }
+
+    /**
+     * @param Google_Service_Calendar_CalendarListEntry $CalendarListEntry
+     * @return array
+     */
+    public function getAllCalendarEntries(Google_Service_Calendar_CalendarListEntry $CalendarListEntry){
+        return array();
     }
 
     /**
@@ -68,24 +70,6 @@ class calpushController
             $this->googleClient->setAssertionCredentials($cred);
         }
         return $this->googleClient;
-    }
-
-    /**
-     * @return localDatesController
-     */
-    private function getLocalDatesController(){
-        if (null === $this->localDatesController){
-            $this->localDatesController = new localDatesController();
-        }
-        return $this->localDatesController;
-    }
-
-    /**
-     * @return boolean
-     */
-    private function sendStatusMail()
-    {
-        return mail('stefanmasz@hotmail.com','Debug','Text folgt');
     }
 
 }

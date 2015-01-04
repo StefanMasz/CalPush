@@ -35,7 +35,7 @@ class CalendarEntry {
     /**
      * @var string
      */
-    private $discrption;
+    private $description;
 
     /**
      * @return boolean
@@ -136,17 +136,24 @@ class CalendarEntry {
     /**
      * @return string
      */
-    public function getDiscrption()
+    public function getDescription()
     {
-        return $this->discrption;
+        return $this->description;
     }
 
     /**
-     * @param string $discrption
+     * @param string $description
      */
-    public function setDiscrption($discrption)
+    public function setDescription($description)
     {
-        $this->discrption = $discrption;
+        $this->description = $description;
     }
 
+    /**
+     * @param array $remoteEntries
+     */
+    public function isKnown($remoteEntries)
+    {
+        return false;
+    }
 }

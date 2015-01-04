@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../Src/class.calpushController.php');
+require_once(__DIR__ . '/../Classes/CalpushController.php');
 
 
 /**

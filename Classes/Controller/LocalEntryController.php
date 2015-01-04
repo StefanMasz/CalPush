@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/Model/class.CalendarEntry.php';
+require_once __DIR__ . '/../Model/CalendarEntry.php';
 
 use Kairos\SpreadsheetReader as Reader;
 
-class localDatesController {
+class localEntryController {
 
     /**
      * @var array
@@ -92,7 +92,7 @@ class localDatesController {
             $entry->setStart($hour1.':'.$minute1);
             $entry->setEnd($hour2.':'.$minute2);
             $entry->setGroup($line[4]);
-            $entry->setDiscrption($line[9]);
+            $entry->setDescription($line[9]);
             $entry->setLocation($line[6]);
 
             $dates[] = $entry;
