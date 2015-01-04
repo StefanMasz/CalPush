@@ -1,6 +1,17 @@
 <?php
 
-class googleCalendarController {
+class googleCalendarController
+{
+
+    /**
+     * @var array
+     */
+    private $eventCache = array();
+
+    /*
+     * @var Google_Service_Calendar_CalendarList
+     */
+    private $calendarList = null;
 
     /**
      * @var Google_Service_Calendar
@@ -15,7 +26,8 @@ class googleCalendarController {
     /**
      * Constructor - init calendarService
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->calendarService = new Google_Service_Calendar($this->getGoogleClient());
     }
 
@@ -24,24 +36,38 @@ class googleCalendarController {
      * @return Google_Service_Calendar_CalendarListEntry
      * @throws Exception
      */
-    public function findGoogleCalendarByTitle($title){
-        $calendarList = $this->calendarService->calendarList->listCalendarList();
-
+    public function findGoogleCalendarByTitle($title)
+    {
         /** @var Google_Service_Calendar_CalendarListEntry $calendar */
-        foreach ($calendarList->getItems() as $calendar){
-            if ($title === $calendar->summary){
+        foreach ($this->getCalendarList()->getItems() as $calendar) {
+            if ($title === $calendar->summary) {
                 return $calendar;
             }
         }
-        throw new Exception('calendar '.$title.' not found at remotesite (google)', 1420368033);
+        throw new Exception('calendar ' . $title . ' not found on remotesite (google)', 1420368033);
     }
 
     /**
-     * @param Google_Service_Calendar_CalendarListEntry $CalendarListEntry
-     * @return array
+     * @param Google_Service_Calendar_CalendarListEntry $calendarListEntry
+     * @return Google_Service_Calendar_Events
      */
-    public function getAllCalendarEntries(Google_Service_Calendar_CalendarListEntry $CalendarListEntry){
-        return array();
+    public function getEventList(Google_Service_Calendar_CalendarListEntry $calendarListEntry)
+    {
+        if (false === array_key_exists($calendarListEntry->getId(), $this->eventCache)) {
+            $this->eventCache[$calendarListEntry->getId()] = $this->calendarService->events->listEvents($calendarListEntry->getId());
+        }
+        return $this->eventCache[$calendarListEntry->getId()];
+    }
+
+    /**
+     * @return Google_Service_Calendar_CalendarList
+     */
+    private function getCalendarList()
+    {
+        if (null === $this->calendarList) {
+            $this->calendarList = $this->calendarService->calendarList->listCalendarList();
+        }
+        return $this->calendarList;
     }
 
     /**

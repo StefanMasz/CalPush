@@ -1,6 +1,7 @@
 <?php
 
-class CalendarEntry {
+class LocalCalendarEntry
+{
 
     /**
      * @var boolean
@@ -150,10 +151,16 @@ class CalendarEntry {
     }
 
     /**
-     * @param array $remoteEntries
+     * @param Google_Service_Calendar_Events $remoteEntries
+     * @return boolean
      */
     public function isKnown($remoteEntries)
     {
+        foreach ($remoteEntries as $entry) {
+            var_dump($entry);
+            die();
+        }
+
         return false;
     }
 }

@@ -13,7 +13,6 @@ class calpushController
      */
     private $googleCalendarController = null;
 
-
     /**
      * @var localEntryController;
      */
@@ -27,11 +26,11 @@ class calpushController
         $localDates = $this->getLocalDatesController()->getDates();
         try {
             $this->syncWithGoogleCalendar($localDates);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             //log error
             echo $e->getMessage();
         }
-        if (false === $this->sendStatusMail()){
+        if (false === $this->sendStatusMail()) {
             echo 'mailversand fehlgeschlagen';
         } else {
             echo 'alles duffte';
@@ -44,30 +43,29 @@ class calpushController
     private function syncWithGoogleCalendar($localDates)
     {
 
-        /** @var CalendarEntry $localDate */
-        foreach ($localDates as $localDate){
+        /** @var LocalCalendarEntry $localDate */
+        foreach ($localDates as $localDate) {
             try {
                 $googleCalendarListEntry = $this->getGoogleCalendarController()->findGoogleCalendarByTitle($localDate->getGroup());
-                $allEntries = $this->getGoogleCalendarController()->getAllCalendarEntries($googleCalendarListEntry);
-                if (false === $localDate->isKnown($allEntries)){
-                    if ($localDate->isCanceled()){
+                $allEntries = $this->getGoogleCalendarController()->getEventList($googleCalendarListEntry);
+                if (false === $localDate->isKnown($allEntries)) {
+                    if ($localDate->isCanceled()) {
                         //ignore
                         continue;
                     }
                     //new
                 } else {
                     //update
-                    if ($localDate->isCanceled()){
+                    if ($localDate->isCanceled()) {
                         //remove
                     }
                 }
 
-            } catch (Exception $e){
+            } catch (Exception $e) {
                 //@todo log error
                 echo $e->getMessage() . "\n\r";
                 continue;
             }
-
 
 
         }
@@ -76,8 +74,9 @@ class calpushController
     /**
      * @return localEntryController
      */
-    private function getLocalDatesController(){
-        if (null === $this->localDatesController){
+    private function getLocalDatesController()
+    {
+        if (null === $this->localDatesController) {
             $this->localDatesController = new localEntryController();
         }
         return $this->localDatesController;
@@ -86,8 +85,9 @@ class calpushController
     /**
      * @return googleCalendarController
      */
-    private function getGoogleCalendarController(){
-        if (null === $this->googleCalendarController){
+    private function getGoogleCalendarController()
+    {
+        if (null === $this->googleCalendarController) {
             $this->googleCalendarController = new googleCalendarController();
         }
         return $this->googleCalendarController;
@@ -98,7 +98,7 @@ class calpushController
      */
     private function sendStatusMail()
     {
-        return mail('stefanmasz@hotmail.com','Debug','Text folgt');
+        return mail('stefanmasz@hotmail.com', 'Debug', 'Text folgt');
     }
 
 }

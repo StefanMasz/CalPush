@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../Classes/Model/CalendarEntry.php');
+require_once(__DIR__ . '/../Classes/Model/LocalCalendarEntry.php');
 
 
 /**
@@ -11,7 +11,7 @@ class CalendarEntryTest extends PHPUnit_Framework_TestCase{
      * @test
      */
     public function isKnownTest(){
-        $entry = new CalendarEntry();
+        $entry = new LocalCalendarEntry();
         $this->assertFalse($entry->isKnown(array()));
     }
 }
