@@ -1,11 +1,12 @@
 <?php
-require_once(__DIR__ . '/../Classes/CalpushController.php');
+require_once(__DIR__ . '/../Classes/Controller/CalpushController.php');
 
 
 /**
  * Class test
  */
-class calpushControllerTest extends PHPUnit_Framework_TestCase{
+class calpushControllerTest extends PHPUnit_Framework_TestCase
+{
 
     /**
      * @var calpushController
@@ -15,7 +16,8 @@ class calpushControllerTest extends PHPUnit_Framework_TestCase{
     /**
      * test setup
      */
-    public function setUp(){
+    public function setUp()
+    {
         $googleClientMock = $this->getMock('Google_Client');
 
         $this->calpushController = $this->getMock('calpushController', array('getGoogleClient', 'sendStatusMail'));
@@ -27,7 +29,8 @@ class calpushControllerTest extends PHPUnit_Framework_TestCase{
     /**
      * @test
      */
-    public function updateCalendarTest(){
+    public function updateCalendarTest()
+    {
         $this->calpushController->updateCalendar();
     }
 }

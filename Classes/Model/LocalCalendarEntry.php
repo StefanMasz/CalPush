@@ -39,6 +39,27 @@ class LocalCalendarEntry
     private $description;
 
     /**
+     * @var DateTimeZone
+     */
+    private $timeZone;
+
+    /**
+     * constructor
+     */
+    public function __construct()
+    {
+        $this->timeZone = new DateTimeZone('Europe/Berlin');
+    }
+
+    /**
+     * @return DateTimeZone
+     */
+    public function getTimeZone()
+    {
+        return $this->timeZone;
+    }
+
+    /**
      * @return boolean
      */
     public function isCanceled()
@@ -156,11 +177,38 @@ class LocalCalendarEntry
      */
     public function isKnown($remoteEntries)
     {
+        /** @var Google_Service_Calendar_Event $entry */
         foreach ($remoteEntries as $entry) {
-            var_dump($entry);
-            die();
+            $start = new DateTime($entry->getStart()['dateTime']);
+            if ($start->format("Y-m-d") === $this->getDate() &&
+                $entry->getSummary() === $this->getGroup()
+            ) {
+                return true;
+            }
         }
 
         return false;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isPast()
+    {
+        $yesterday = new DateTime();
+        $yesterday->modify("-1 day");
+        if ($yesterday > $this->getDateTimeStart()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDateTimeStart()
+    {
+        return new DateTime($this->getDate() . ' ' . $this->getStart());
+    }
+
 }

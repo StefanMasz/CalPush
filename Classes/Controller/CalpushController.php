@@ -19,6 +19,11 @@ class calpushController
     private $localDatesController = null;
 
     /**
+     * @var array;
+     */
+    private $eventCounter = array();
+
+    /**
      * updates the configured calendars
      */
     public function updateCalendar()
@@ -30,11 +35,12 @@ class calpushController
             //log error
             echo $e->getMessage();
         }
-        if (false === $this->sendStatusMail()) {
+        /*if (false === $this->sendStatusMail()) {
             echo 'mailversand fehlgeschlagen';
         } else {
             echo 'alles duffte';
-        }
+        }*/
+        echo 'ende';
     }
 
     /**
@@ -43,21 +49,39 @@ class calpushController
     private function syncWithGoogleCalendar($localDates)
     {
 
+        $this->eventCounter['new'] = 0;
+        $this->eventCounter['updated'] = 0;
+        $this->eventCounter['deleted'] = 0;
+        $this->eventCounter['ignored'] = 0;
         /** @var LocalCalendarEntry $localDate */
         foreach ($localDates as $localDate) {
             try {
-                $googleCalendarListEntry = $this->getGoogleCalendarController()->findGoogleCalendarByTitle($localDate->getGroup());
-                $allEntries = $this->getGoogleCalendarController()->getEventList($googleCalendarListEntry);
+                if ($localDate->isPast()) {
+                    $this->eventCounter['ignored']++;
+                    continue;
+                }
+                try {
+                    $googleCalendarListEntry = $this->getGoogleCalendarController()->findGoogleCalendarByTitle($localDate->getGroup());
+                    $allEntries = $this->getGoogleCalendarController()->getEventList($googleCalendarListEntry);
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                    die();
+                }
                 if (false === $localDate->isKnown($allEntries)) {
                     if ($localDate->isCanceled()) {
                         //ignore
+                        $this->eventCounter['ignored']++;
                         continue;
                     }
                     //new
+                    $this->getGoogleCalendarController()->addEvent($localDate, $googleCalendarListEntry);
+                    $this->eventCounter['new']++;
                 } else {
-                    //update
                     if ($localDate->isCanceled()) {
                         //remove
+                    } else {
+                        //update
+                        $this->eventCounter['updated']++;
                     }
                 }
 
@@ -67,8 +91,8 @@ class calpushController
                 continue;
             }
 
-
         }
+        var_dump($this->eventCounter);
     }
 
     /**

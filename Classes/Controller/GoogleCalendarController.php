@@ -60,6 +60,32 @@ class googleCalendarController
     }
 
     /**
+     * @param LocalCalendarEntry $localEvent
+     * @param Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry
+     */
+    public function addEvent(LocalCalendarEntry $localEvent, Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry)
+    {
+        $event = new Google_Service_Calendar_Event();
+        $event->setSummary($localEvent->getGroup());
+
+        $googleStart = new Google_Service_Calendar_EventDateTime();
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00');
+        $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
+        $googleEnd = new Google_Service_Calendar_EventDateTime();
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00');
+        $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
+
+        $event->setStart($googleStart);
+        $event->setEnd($googleEnd);
+
+        try {
+            $this->calendarService->events->insert($googleCalendarListEntry->getId(), $event);
+        } catch (Exception $e) {
+            die($e->getMessage());
+        }
+    }
+
+    /**
      * @return Google_Service_Calendar_CalendarList
      */
     private function getCalendarList()

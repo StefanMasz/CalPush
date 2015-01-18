@@ -58,7 +58,7 @@ class localEntryController
     {
         $reader = new Reader\SpreadsheetReaderODS('local.ods');
 
-        $reader->ChangeSheet(0);
+        $reader->ChangeSheet(3);
 
         return $reader;
     }
