@@ -35,12 +35,11 @@ class calpushController
             //log error
             echo $e->getMessage();
         }
-        /*if (false === $this->sendStatusMail()) {
+        if (false === $this->sendStatusMail()) {
             echo 'mailversand fehlgeschlagen';
         } else {
             echo 'alles duffte';
-        }*/
-        echo 'ende';
+        }
     }
 
     /**
@@ -127,7 +126,11 @@ class calpushController
      */
     private function sendStatusMail()
     {
-        return mail('stefanmasz@hotmail.com', 'Debug', 'Text folgt');
+        $text = 'Import successful' . "\r\n";
+        foreach ($this->eventCounter as $event => $value){
+            $text .= $event .':' . $value . "\r\n";
+        }
+        return mail(ADMIN_MAILS, 'Import successful', $text);
     }
 
 }
