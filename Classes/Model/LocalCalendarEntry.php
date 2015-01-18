@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class LocalCalendarEntry
+ * "Reconstituted" representation of a single line from the ".ods-file"
+ * @author Stefan Masztalerz <stefanmasz@hotmail.com>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
 class LocalCalendarEntry
 {
 
@@ -172,26 +178,6 @@ class LocalCalendarEntry
     }
 
     /**
-     * @param Google_Service_Calendar_Events $remoteEntries
-     * @return boolean|Google_Service_Calendar_Event
-     * @todo codesmell: mixed return values
-     */
-    public function isKnown($remoteEntries)
-    {
-        /** @var Google_Service_Calendar_Event $entry */
-        foreach ($remoteEntries as $entry) {
-            $start = new DateTime($entry->getStart()['dateTime']);
-            if ($start->format("Y-m-d") === $this->getDate() &&
-                $entry->getSummary() === $this->getGroup()
-            ) {
-                return $entry;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @return boolean
      */
     public function isPast()
@@ -207,7 +193,7 @@ class LocalCalendarEntry
     /**
      * @return DateTime
      */
-    public function getDateTimeStart()
+    private function getDateTimeStart()
     {
         return new DateTime($this->getDate() . ' ' . $this->getStart());
     }

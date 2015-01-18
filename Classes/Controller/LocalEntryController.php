@@ -4,6 +4,12 @@ require_once __DIR__ . '/../Model/LocalCalendarEntry.php';
 
 use Kairos\SpreadsheetReader as Reader;
 
+
+/**
+ * Class localEntryController
+ * @author Stefan Masztalerz <stefanmasz@hotmail.com>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
 class localEntryController
 {
 
@@ -18,7 +24,7 @@ class localEntryController
     public function getDates()
     {
         $this->copyToLocal();
-        $reader = $this->readFirstSheetFromlocalOds();
+        $reader = $this->readSheetFromlocalOds();
         $dates = $this->reconstituteDates($reader);
         return $dates;
     }
@@ -54,19 +60,19 @@ class localEntryController
     /**
      * @return array
      */
-    private function readFirstSheetFromlocalOds()
+    private function readSheetFromlocalOds()
     {
         $reader = new Reader\SpreadsheetReaderODS('local.ods');
 
-        $reader->ChangeSheet(3);
+        $reader->ChangeSheet(ACTIVE_SHEET);
 
         return $reader;
     }
 
     /**
+     * this depends highly on the structure of the ods-file
      * @param Reader\SpreadsheetReaderODS $reader
      * @return array
-     * @TODO make this configurable - this depends on structure of ods
      */
     private function reconstituteDates(Reader\SpreadsheetReaderODS $reader)
     {
@@ -75,11 +81,11 @@ class localEntryController
                 continue;
             }
             if (!preg_match("/^([0-9]{2})\.([0-9]{2})\.([0-9]{2})$/", $line[2])) {
-                $this->errorLogMessages[] = 'Datum invalide. ' . $line[2] . ' Muss: TT.MM.YY';
+                $this->errorLogMessages[] = 'Date invalid. ' . $line[2] . ' Should: DD.MM.YY';
                 continue;
             }
             if (!preg_match("/^([0-2][0-9]).([0-5][0-9]).*([0-2][0-9]).([0-5][0-9])$/", $line[3])) {
-                $this->errorLogMessages[] = 'Uhrzeit invalide. ' . $line[3] . ' Muss: HH:MM - HH:MM';
+                $this->errorLogMessages[] = 'Time invalid. ' . $line[3] . ' Should: HH:MM - HH:MM';
                 continue;
             }
 

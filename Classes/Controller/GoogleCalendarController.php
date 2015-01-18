@@ -2,6 +2,11 @@
 
 require_once __DIR__ . '/../Service/GoogleClientService.php';
 
+/**
+ * Class googleCalendarController
+ * @author Stefan Masztalerz <stefanmasz@hotmail.com>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
 class googleCalendarController
 {
 

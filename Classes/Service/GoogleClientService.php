@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class GoogleClientService
+ * @author Stefan Masztalerz <stefanmasz@hotmail.com>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ */
 class GoogleClientService {
 
     /**
