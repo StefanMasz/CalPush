@@ -48,7 +48,6 @@ class calpushController
      */
     private function syncWithGoogleCalendar($localDates)
     {
-
         $this->eventCounter['new'] = 0;
         $this->eventCounter['updated'] = 0;
         $this->eventCounter['deleted'] = 0;
@@ -64,12 +63,16 @@ class calpushController
                     $googleCalendarListEntry = $this->getGoogleCalendarController()->findGoogleCalendarByTitle($localDate->getGroup());
                     $allEntries = $this->getGoogleCalendarController()->getEventList($googleCalendarListEntry);
                 } catch (Exception $e) {
-                    echo $e->getMessage();
+                    echo $e->getMessage(). "\n\r";
+                    if ($e->getCode() === 1420368033){
+                        continue; //just a warning
+                    }
                     die();
                 }
-                if (false === $localDate->isKnown($allEntries)) {
+                $remoteEntry = $localDate->isKnown($allEntries);
+                if (false === $remoteEntry) {
                     if ($localDate->isCanceled()) {
-                        //ignore
+                        //ignore, because not known remote and already canceled
                         $this->eventCounter['ignored']++;
                         continue;
                     }
@@ -78,9 +81,12 @@ class calpushController
                     $this->eventCounter['new']++;
                 } else {
                     if ($localDate->isCanceled()) {
-                        //remove
+                        //delete
+                        $this->getGoogleCalendarController()->deleteEvent($googleCalendarListEntry, $remoteEntry);
+                        $this->eventCounter['deleted']++;
                     } else {
                         //update
+                        $this->getGoogleCalendarController()->updateEvent($localDate, $googleCalendarListEntry, $remoteEntry);
                         $this->eventCounter['updated']++;
                     }
                 }
@@ -92,7 +98,6 @@ class calpushController
             }
 
         }
-        var_dump($this->eventCounter);
     }
 
     /**

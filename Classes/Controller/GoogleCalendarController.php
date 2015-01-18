@@ -63,7 +63,9 @@ class googleCalendarController
      * @param LocalCalendarEntry $localEvent
      * @param Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry
      */
-    public function addEvent(LocalCalendarEntry $localEvent, Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry)
+    public function addEvent(
+        LocalCalendarEntry $localEvent,
+        Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry)
     {
         $event = new Google_Service_Calendar_Event();
         $event->setSummary($localEvent->getGroup());
@@ -78,8 +80,54 @@ class googleCalendarController
         $event->setStart($googleStart);
         $event->setEnd($googleEnd);
 
+        $event->setLocation($localEvent->getLocation());
+
         try {
             $this->calendarService->events->insert($googleCalendarListEntry->getId(), $event);
+        } catch (Exception $e) {
+            die($e->getMessage());
+        }
+    }
+
+    /**
+     * @param LocalCalendarEntry $localEvent
+     * @param Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry
+     * @param Google_Service_Calendar_Event $remoteEvent
+     */
+    public function updateEvent(
+        LocalCalendarEntry $localEvent,
+        Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry,
+        Google_Service_Calendar_Event $remoteEvent)
+    {
+        $googleStart = new Google_Service_Calendar_EventDateTime();
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00');
+        $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
+        $googleEnd = new Google_Service_Calendar_EventDateTime();
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00');
+        $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
+
+        $remoteEvent->setStart($googleStart);
+        $remoteEvent->setEnd($googleEnd);
+
+        $remoteEvent->setLocation($localEvent->getLocation());
+
+        try {
+            $this->calendarService->events->update($googleCalendarListEntry->getId(),$remoteEvent->getId(), $remoteEvent);
+        } catch (Exception $e) {
+            die($e->getMessage());
+        }
+    }
+
+    /**
+     * @param Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry
+     * @param Google_Service_Calendar_Event $remoteEvent
+     */
+    public function deleteEvent(
+        Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry,
+        Google_Service_Calendar_Event $remoteEvent)
+    {
+        try {
+            $this->calendarService->events->delete($googleCalendarListEntry->getId(),$remoteEvent->getId());
         } catch (Exception $e) {
             die($e->getMessage());
         }

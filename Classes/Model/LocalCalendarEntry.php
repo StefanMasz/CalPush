@@ -173,7 +173,8 @@ class LocalCalendarEntry
 
     /**
      * @param Google_Service_Calendar_Events $remoteEntries
-     * @return boolean
+     * @return boolean|Google_Service_Calendar_Event
+     * @todo codesmell: mixed return values
      */
     public function isKnown($remoteEntries)
     {
@@ -183,7 +184,7 @@ class LocalCalendarEntry
             if ($start->format("Y-m-d") === $this->getDate() &&
                 $entry->getSummary() === $this->getGroup()
             ) {
-                return true;
+                return $entry;
             }
         }
 
