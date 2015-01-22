@@ -54,7 +54,7 @@ class LocalCalendarEntry
      */
     public function __construct()
     {
-        $this->timeZone = new DateTimeZone('Europe/Berlin');
+        $this->timeZone = new DateTimeZone(LOCAL_TIMEZONE);
     }
 
     /**
@@ -191,11 +191,21 @@ class LocalCalendarEntry
     }
 
     /**
+     * @return string
+     */
+    public function getOffsetInHoursWithLeadingZero()
+    {
+        $offset = (int) round($this->getTimeZone()->getOffset($this->getDateTimeStart()) / 60 / 60);
+        return str_pad($offset, 2, '0', STR_PAD_LEFT);
+    }
+
+    /**
      * @return DateTime
      */
     private function getDateTimeStart()
     {
         return new DateTime($this->getDate() . ' ' . $this->getStart());
     }
+
 
 }

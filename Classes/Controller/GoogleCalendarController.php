@@ -77,11 +77,14 @@ class googleCalendarController
         $event = new Google_Service_Calendar_Event();
         $event->setSummary($localEvent->getGroup());
 
+        $offset = $localEvent->getOffsetInHoursWithLeadingZero();
+        //@TODO expecting positiv offset because only expecting GTM +1 or +2 (germany)
+
         $googleStart = new Google_Service_Calendar_EventDateTime();
-        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00');
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+'.$offset);
         $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
         $googleEnd = new Google_Service_Calendar_EventDateTime();
-        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00');
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+'.$offset);
         $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
 
         $event->setStart($googleStart);
@@ -106,11 +109,15 @@ class googleCalendarController
         Google_Service_Calendar_CalendarListEntry $googleCalendarListEntry,
         Google_Service_Calendar_Event $remoteEvent)
     {
+
+        $offset = $localEvent->getOffsetInHoursWithLeadingZero();
+        //@TODO expecting positiv offset because only expecting GTM +1 or +2 (germany)
+
         $googleStart = new Google_Service_Calendar_EventDateTime();
-        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00');
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+'.$offset);
         $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
         $googleEnd = new Google_Service_Calendar_EventDateTime();
-        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00');
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+'.$offset);
         $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
 
         $remoteEvent->setStart($googleStart);
