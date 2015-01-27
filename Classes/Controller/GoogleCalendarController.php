@@ -81,10 +81,10 @@ class googleCalendarController
         //@TODO expecting positiv offset because only expecting GTM +1 or +2 (germany)
 
         $googleStart = new Google_Service_Calendar_EventDateTime();
-        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+'.$offset);
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+' . $offset);
         $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
         $googleEnd = new Google_Service_Calendar_EventDateTime();
-        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+'.$offset);
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+' . $offset);
         $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
 
         $event->setStart($googleStart);
@@ -114,10 +114,10 @@ class googleCalendarController
         //@TODO expecting positiv offset because only expecting GTM +1 or +2 (germany)
 
         $googleStart = new Google_Service_Calendar_EventDateTime();
-        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+'.$offset);
+        $googleStart->setDateTime($localEvent->getDate() . 'T' . $localEvent->getStart() . ':00+' . $offset);
         $googleStart->setTimeZone($localEvent->getTimeZone()->getName());
         $googleEnd = new Google_Service_Calendar_EventDateTime();
-        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+'.$offset);
+        $googleEnd->setDateTime($localEvent->getDate() . 'T' . $localEvent->getEnd() . ':00+' . $offset);
         $googleEnd->setTimeZone($localEvent->getTimeZone()->getName());
 
         $remoteEvent->setStart($googleStart);
@@ -126,7 +126,7 @@ class googleCalendarController
         $remoteEvent->setLocation($localEvent->getLocation());
 
         try {
-            $this->calendarService->events->update($googleCalendarListEntry->getId(),$remoteEvent->getId(), $remoteEvent);
+            $this->calendarService->events->update($googleCalendarListEntry->getId(), $remoteEvent->getId(), $remoteEvent);
         } catch (Exception $e) {
             die($e->getMessage());
         }
@@ -141,7 +141,7 @@ class googleCalendarController
         Google_Service_Calendar_Event $remoteEvent)
     {
         try {
-            $this->calendarService->events->delete($googleCalendarListEntry->getId(),$remoteEvent->getId());
+            $this->calendarService->events->delete($googleCalendarListEntry->getId(), $remoteEvent->getId());
         } catch (Exception $e) {
             die($e->getMessage());
         }

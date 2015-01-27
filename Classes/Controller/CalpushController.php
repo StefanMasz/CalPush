@@ -26,6 +26,11 @@ class calpushController
     private $eventCounter = array();
 
     /**
+     * @var array
+     */
+    private $errorLog = array();
+
+    /**
      * updates the configured calendars
      */
     public function updateCalendar()
@@ -46,13 +51,19 @@ class calpushController
     private function sendStatusMail()
     {
         $text = 'Import successful' . "\r\n";
-        foreach ($this->eventCounter as $event => $value){
-            $text .= $event .':' . $value . "\r\n";
+        foreach ($this->eventCounter as $event => $value) {
+            $text .= $event . ':' . $value . "\r\n";
         }
         $ignoredFormatingErrors = $this->getLocalDatesController()->getErrorLogMessages();
-        if (false === empty($ignoredFormatingErrors)){
-            $text .= 'Errors in ods-File - effected lines not imported - please fix' . "\r\n";
-            foreach ($ignoredFormatingErrors as $error){
+        if (false === empty($ignoredFormatingErrors)) {
+            $text .= "\r\n" . 'Errors in ods-File - effected lines not imported - please fix' . "\r\n";
+            foreach ($ignoredFormatingErrors as $error) {
+                $text .= $error . "\r\n";
+            }
+        }
+        if (false === empty($this->errorLog)) {
+            $text .= "\r\n" . 'Errors while importing!' . "\r\n";
+            foreach ($this->errorLog as $error) {
                 $text .= $error . "\r\n";
             }
         }
@@ -76,8 +87,9 @@ class calpushController
                     $googleCalendarListEntry = $this->getGoogleCalendarController()->findGoogleCalendarByTitle($localDate->getGroup());
                     $allEntries = $this->getGoogleCalendarController()->getEventList($googleCalendarListEntry);
                 } catch (Exception $e) {
-                    echo $e->getMessage(). "\n\r";
-                    if ($e->getCode() === 1420368033){
+                    echo $e->getMessage() . "<br/>";
+                    $this->errorLog[] = $e->getMessage();
+                    if ($e->getCode() === 1420368033) {
                         continue; //just a warning - go on
                     } else {
                         throw $e;
@@ -85,8 +97,8 @@ class calpushController
                 }
                 try {
                     $remoteDate = $this->findDate($localDate, $allEntries);
-                } catch (Exception $e){
-                    if ($e->getCode() === 1421616577){
+                } catch (Exception $e) {
+                    if ($e->getCode() === 1421616577) {
                         //remoteDate not found, has to be a new one
                         $remoteDate = false;
                     } else {
@@ -127,10 +139,12 @@ class calpushController
      * @return Google_Service_Calendar_Event
      * @throws Exception
      */
-    private function findDate(LocalCalendarEntry $localDate, Google_Service_Calendar_Events $remoteDates){
+    private function findDate(LocalCalendarEntry $localDate, Google_Service_Calendar_Events $remoteDates)
+    {
         /** @var Google_Service_Calendar_Event $entry */
         foreach ($remoteDates as $entry) {
-            $start = new DateTime($entry->getStart()['dateTime']);
+            $start = $entry->getStart();
+            $start = new DateTime($start['dateTime']);
             if ($start->format("Y-m-d") === $localDate->getDate() &&
                 $entry->getSummary() === $localDate->getGroup()
             ) {

@@ -195,7 +195,7 @@ class LocalCalendarEntry
      */
     public function getOffsetInHoursWithLeadingZero()
     {
-        $offset = (int) round($this->getTimeZone()->getOffset($this->getDateTimeStart()) / 60 / 60);
+        $offset = (int)round($this->getTimeZone()->getOffset($this->getDateTimeStart()) / 60 / 60);
         return str_pad($offset, 2, '0', STR_PAD_LEFT);
     }
 

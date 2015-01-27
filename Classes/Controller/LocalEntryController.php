@@ -24,7 +24,7 @@ class localEntryController
     public function getDates()
     {
         $this->copyToLocal();
-        $reader = $this->readSheetFromlocalOds();
+        $reader = $this->readSheetFromLocalOds();
         $dates = $this->reconstituteDates($reader);
         return $dates;
     }
@@ -58,15 +58,20 @@ class localEntryController
     }
 
     /**
-     * @return array
+     * @return Reader\SpreadsheetReaderODS
+     * @throws Exception
      */
-    private function readSheetFromlocalOds()
+    private function readSheetFromLocalOds()
     {
-        $reader = new Reader\SpreadsheetReaderODS('local.ods');
-
-        $reader->ChangeSheet(ACTIVE_SHEET);
-
-        return $reader;
+        $localFile = __DIR__ . '/../../local.ods';
+        if (is_file($localFile)) {
+            $options['TempDir'] = __DIR__ . '/../../tmp/';
+            $reader = new Reader\SpreadsheetReaderODS($localFile, $options);
+            $reader->ChangeSheet(ACTIVE_SHEET);
+            return $reader;
+        } else {
+            throw new Exception('could not load ods file', 1422383584);
+        }
     }
 
     /**

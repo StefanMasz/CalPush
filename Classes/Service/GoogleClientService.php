@@ -5,7 +5,8 @@
  * @author Stefan Masztalerz <stefanmasz@hotmail.com>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-class GoogleClientService {
+class GoogleClientService
+{
 
     /**
      * @var Google_Client
@@ -15,11 +16,13 @@ class GoogleClientService {
     /**
      * Initialize Google Client from constants
      * @return Google_Client
-    */
+     */
     public function getGoogleClient()
     {
         if (null === $this->googleClient) {
-            $this->googleClient = new Google_Client();
+            $config = $this->getGoogleConfig();
+
+            $this->googleClient = new Google_Client($config);
             $this->googleClient->setDeveloperKey(DEVELOPERKEY);
             $this->googleClient->setApplicationName(APPLICATIONNAME);
             $this->googleClient->setClientId(CLIENTID);
@@ -38,5 +41,15 @@ class GoogleClientService {
             $this->googleClient->setAssertionCredentials($cred);
         }
         return $this->googleClient;
+    }
+
+    /**
+     * @return Google_Config
+     */
+    private function getGoogleConfig()
+    {
+        $config = new Google_Config();
+        $config->setClassConfig('Google_Cache_File', array('directory' => __DIR__ . '/../../tmp/'));
+        return $config;
     }
 }
