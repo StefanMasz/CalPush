@@ -91,6 +91,7 @@ class googleCalendarController
         $event->setEnd($googleEnd);
 
         $event->setLocation($localEvent->getLocation());
+        $event->setDescription($localEvent->getDescription());
 
         try {
             $this->calendarService->events->insert($googleCalendarListEntry->getId(), $event);
@@ -124,7 +125,7 @@ class googleCalendarController
         $remoteEvent->setEnd($googleEnd);
 
         $remoteEvent->setLocation($localEvent->getLocation());
-
+        $remoteEvent->setDescription($localEvent->getDescription());
         try {
             $this->calendarService->events->update($googleCalendarListEntry->getId(), $remoteEvent->getId(), $remoteEvent);
         } catch (Exception $e) {
